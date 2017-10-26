@@ -1,42 +1,64 @@
 const path = require("path");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-module.exports = {
+module.exports = (env) => {
 
-    entry: "./src/app.js",
+    const isProduction = env === "production";
+    const CSSExtract = new ExtractTextPlugin("styles.css");
 
-    output: {
+    return {
 
-        path: path.join(__dirname, "public"),
-        filename: "bundle.js" 
-    },
+        entry: "./src/app.js",
 
-    module: {
+        output: {
 
-        rules: [
+            path: path.join(__dirname, "public"),
+            filename: "bundle.js" 
+        },
 
-            { 
-                test: /\.js$/,
-                loader: "babel-loader",
-                exclude: /node_modules/ 
-            },
+        module: {
 
-            {
-                test: /\.s?css$/,
-                use: [
-                    "style-loader",
-                    "css-loader",
-                    "sass-loader"
-                ]
-            }
-        ]
-    },
+            rules: [
 
-    devtool: "cheap-module-eval-source-map",
+                { 
+                    test: /\.js$/,
+                    loader: "babel-loader",
+                    exclude: /node_modules/ 
+                },
 
-    devServer: {
+                {
+                    test: /\.s?css$/,
+                    use: CSSExtract.extract({
 
-        contentBase: path.join(__dirname, "public"),
-        historyApiFallback: true
-    }
+                        use: [ 
+                            {
+                                loader: "css-loader",
+                                options: {
+                                    sourceMap: true
+                                }
+                            },
+                            {
+                                loader: "sass-loader",
+                                options: {
+                                    sourceMap: true
+                                }
+                            }
+                        ]
+                    })
+                }
+            ]
+        },
+
+        plugins: [ CSSExtract ],
+
+        devtool: isProduction ? "source-map" : "inline-source-map",
+
+        devServer: {
+
+            contentBase: path.join(__dirname, "public"),
+            historyApiFallback: true
+        }
+
+    };
 
 };

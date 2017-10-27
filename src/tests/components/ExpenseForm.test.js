@@ -1,3 +1,5 @@
+// in ExpenseForm.js comment out moment.locale("en-gb"); line to pass this test
+
 import React from "react";
 import { shallow } from "enzyme";
 import moment from "moment";

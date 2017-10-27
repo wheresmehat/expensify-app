@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import moment from "moment";
 import { SingleDatePicker } from "react-dates";
 
-moment.locale("en-gb"); // breaks testing, uncomment for production
+moment.locale("en-gb"); // breaks testing, comment for testing; uncomment for production
 
 class ExpenseForm extends Component {
 

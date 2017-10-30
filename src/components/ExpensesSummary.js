@@ -12,14 +12,9 @@ export const ExpensesSummary = ({ expensesCount, expensesTotal }) => {
     return (
 
         <div>
-            {expensesCount ? 
-            
-                <h1>
-                    Viewing {expensesCount} {expensesCount > 1 ? "expenses" : "expense"} totalling {totalFormatted}
-                </h1>
-            :
-                null
-            }
+            <h1>
+                Viewing {expensesCount} {expensesCount === 1 ? "expense" : "expenses"} totalling {totalFormatted}
+            </h1>
         </div>
     );
 

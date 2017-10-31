@@ -6,6 +6,7 @@ import configureStore from "./store/configureStore";
 import AppRouter from "./routers/AppRouter";
 import { addExpense } from "./actions/expenses";
 import { setTextFilter, sortByAmount } from "./actions/filters";
+import "./firebase/firebase";
 
 import "normalize.css/normalize.css";
 import "./styles/styles.scss";

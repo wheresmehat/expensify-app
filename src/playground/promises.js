@@ -13,6 +13,11 @@ p
 .then((data) => {
     //throw new Error("First then error");
     console.log(data);
+    return "Promises chaining!"
+})
+.then((str) => {
+
+    console.log(str);
 })
 .catch((err) => {
 

@@ -1,30 +1,26 @@
-import { addExpense, editExpense, removeExpense } from "../../actions/expenses";
+import configureMockStore from "redux-mock-store";
+import thunk from "redux-thunk";
+
+import { addExpense, startAddExpense, editExpense, removeExpense } from "../../actions/expenses";
+import expenses from "../fixtures/expenses";
+import database from "../../firebase/firebase";
+
+const createMockStore = configureMockStore([thunk]);
 
 test("should setup add expense action object with provided values", () => {
 
-    const expenseData = {
-
-        description: "Rent",
-        amount: 34000,
-        note: "Last month's rent",
-        createdAt: 1000
-    };
-
-    const action = addExpense(expenseData);
+    const action = addExpense(expenses[1]);
 
     expect(action).toEqual({ 
         
         type: "ADD_EXPENSE",
-        expense: {
-            ...expenseData,
-            id: expect.any(String)
-        } 
+        expense: expenses[1]
     
     });
 
 });
 
-test("should setup add expense action object with default values", () => {
+test("should add expense with defaults to database and store", () => {
 
     const expenseDefaults = { 
         
@@ -34,17 +30,69 @@ test("should setup add expense action object with default values", () => {
         createdAt: 0
     };
 
-    const action = addExpense();
+    const store = createMockStore({});
 
-    expect(action).toEqual({ 
+    return store.dispatch(startAddExpense())
+        .then(() => {
+
+            const actions = store.getActions();
+
+            expect(actions[0]).toEqual({
+                
+                type: "ADD_EXPENSE",
+                expense: {
+
+                    id: expect.any(String),
+                    ...expenseDefaults
+                }
+            });
+
+            return database.ref(`expenses/${actions[0].expense.id}`).once("value");
+            
+        })
+        .then((snapshot) => {
+
+            expect(snapshot.val()).toEqual(expenseDefaults);
+            
+        });
+
+});
+
+test("should add expense to database and store", () => {
+
+    const expenseData = { 
         
-        type: "ADD_EXPENSE",
-        expense: {
-            ...expenseDefaults,
-            id: expect.any(String)
-        } 
-    
-    });
+        description: "Cinema",
+        amount: 3400, 
+        note: "Blade Runner 2049", 
+        createdAt: 1000
+    };
+
+    const store = createMockStore({});
+
+    return store.dispatch(startAddExpense(expenseData))
+        .then(() => {
+
+            const actions = store.getActions();
+
+            expect(actions[0]).toEqual({
+                
+                type: "ADD_EXPENSE",
+                expense: {
+
+                    id: expect.any(String),
+                    ...expenseData
+                }
+            });
+
+            return database.ref(`expenses/${actions[0].expense.id}`).once("value");
+            
+        })
+        .then((snapshot) => {
+
+            expect(snapshot.val()).toEqual(expenseData);
+            
+        });
 
 });
 
@@ -69,3 +117,53 @@ test("should setup remove expense action object", () => {
 
 });
 
+
+
+
+
+/*
+
+// nested inside then vs chaining promises above 
+
+test("should add expense to database and store", () => {
+
+    const expenseData = { 
+        
+        description: "Cinema",
+        amount: 3400, 
+        note: "Blade Runner 2049", 
+        createdAt: 1000
+    };
+
+    const store = createMockStore({});
+
+    return store.dispatch(startAddExpense(expenseData))
+        .then(() => {
+
+            const actions = store.getActions();
+
+            expect(actions[0]).toEqual({
+                
+                type: "ADD_EXPENSE",
+                expense: {
+
+                    id: expect.any(String),
+                    ...expenseData
+                }
+            });
+
+            database.ref(`expenses/${actions[0].expense.id}`).once("value") // above we return this and chain another then
+                .then((snapshot) => {
+
+                    expect(snapshot.val()).toEqual(expenseData);
+                    
+                });
+            
+            
+        });
+
+});
+
+
+
+*/

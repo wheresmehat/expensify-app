@@ -4,8 +4,10 @@ import thunk from "redux-thunk";
 import { 
     addExpense, 
     startAddExpense, 
-    editExpense, 
-    removeExpense, 
+    editExpense,
+    startEditExpense, 
+    removeExpense,
+    startRemoveExpense, 
     setExpenses,
     startSetExpenses
 } from "../../actions/expenses";
@@ -79,7 +81,7 @@ test("should add expense with defaults to database and store", () => {
 
 });
 
-test("should add expense to database and store", () => {
+test("should add expense to firebase and store", () => {
 
     const expenseData = { 
         
@@ -130,11 +132,67 @@ test("should setup edit expense action object", () => {
 
 });
 
+test("should edit expense on firebase", () => {
+
+    const store = createMockStore({});
+    const { id, ...noIdExpense } = expenses[0]; // firebase returns expense with no id so we put the id property from expense on a separate id variable and the rest of the properties on the noIdExpense variable, now we can test the expense returned from firebase below; https://codeburst.io/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90
+    const updates = { note: "I'm sure eating a lot of gum!" };
+
+    return store.dispatch(startEditExpense(id, updates))   // return promise so jest knows it is async
+        .then(() => {
+
+            const actions = store.getActions();
+
+            expect(actions[0]).toEqual({
+                
+                type: "EDIT_EXPENSE",
+                id,
+                updates
+            });
+
+            return database.ref(`expenses/${id}`).once("value");
+
+        })
+        .then((snapshot) => {
+
+            expect(snapshot.val()).toEqual({ ...noIdExpense, ...updates }); // noIdExpense doesn't have id; and that is exactly what we get from firebase
+            
+        });
+
+});
+
 test("should setup remove expense action object", () => {
 
     const action = removeExpense({ id: "123abc" });
 
     expect(action).toEqual({ type: "REMOVE_EXPENSE", id: "123abc" });
+
+});
+
+test("should remove expense from firebase", () => {
+
+    const store = createMockStore({});
+    const id = expenses[0].id;
+
+    return store.dispatch(startRemoveExpense({id}))   // return promise so jest knows it is async
+        .then(() => {
+
+            const actions = store.getActions();
+
+            expect(actions[0]).toEqual({
+                
+                type: "REMOVE_EXPENSE",
+                id
+            });
+
+            return database.ref(`expenses/${id}`).once("value");
+
+        })
+        .then((snapshot) => {
+
+            expect(snapshot.val()).toEqual(null);
+            
+        });
 
 });
 
@@ -200,7 +258,7 @@ test("should add expense to database and store", () => {
                 }
             });
 
-            database.ref(`expenses/${actions[0].expense.id}`).once("value") // above we return this and chain another then
+            database.ref(`expenses/${actions[0].expense.id}`).once("value") // above we return this in the first then and now we can chain another then that gets the returned value
                 .then((snapshot) => {
 
                     expect(snapshot.val()).toEqual(expenseData);

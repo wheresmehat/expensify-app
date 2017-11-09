@@ -34,12 +34,38 @@ export const removeExpense = ({ id } = {}) => ({
     id
 });
 
+export const startRemoveExpense = ({ id }) => {
+
+    return (dispatch) => {
+
+        return database.ref(`expenses/${id}`)  // return for testing purposes
+            .remove()
+            .then(() => {
+                
+                dispatch(removeExpense({id}))
+            });
+    };
+};
+
 export const editExpense = (id, updates) => ({
 
     type:"EDIT_EXPENSE",
     id,
     updates
 });
+
+export const startEditExpense = (id, updates) => {
+
+    return (dispatch) => {
+
+        return database.ref(`expenses/${id}`)  // return for testing purposes
+            .update(updates)
+            .then(() => {
+                
+                dispatch(editExpense(id, updates))
+            });
+    };
+};
 
 export const setExpenses = (expenses) => ({
 

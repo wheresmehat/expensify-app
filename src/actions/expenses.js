@@ -9,13 +9,15 @@ export const addExpense = (expense) => ({
 
 export const startAddExpense = (expenseData = {}) => {
 
-    return (dispatch) => {
+    return (dispatch, getState) => {
+
+        const uid = getState().auth.uid;
 
         const { description = "", note = "", amount = 0, createdAt = 0 } = expenseData;
 
         const expense = { description, note, amount, createdAt };
 
-        return database.ref("expenses").push(expense)   // return for testing purposes
+        return database.ref(`users/${uid}/expenses`).push(expense)   // return for testing purposes
             .then((ref) => {
             
                 dispatch(addExpense({
@@ -36,9 +38,11 @@ export const removeExpense = ({ id } = {}) => ({
 
 export const startRemoveExpense = ({ id }) => {
 
-    return (dispatch) => {
+    return (dispatch, getState) => {
 
-        return database.ref(`expenses/${id}`)  // return for testing purposes
+        const uid = getState().auth.uid;
+
+        return database.ref(`users/${uid}/expenses/${id}`)  // return for testing purposes
             .remove()
             .then(() => {
                 
@@ -56,9 +60,11 @@ export const editExpense = (id, updates) => ({
 
 export const startEditExpense = (id, updates) => {
 
-    return (dispatch) => {
+    return (dispatch, getState) => {
 
-        return database.ref(`expenses/${id}`)  // return for testing purposes
+        const uid = getState().auth.uid;
+
+        return database.ref(`users/${uid}/expenses/${id}`)  // return for testing purposes
             .update(updates)
             .then(() => {
                 
@@ -75,9 +81,11 @@ export const setExpenses = (expenses) => ({
 
 export const startSetExpenses = () => {
 
-    return (dispatch) => {
+    return (dispatch, getState) => {
 
-        return database.ref("expenses")  // return for testing purposes
+        const uid = getState().auth.uid;
+
+        return database.ref(`users/${uid}/expenses`)  // return for testing purposes
             .once("value")
             .then((snapshot) => {
 

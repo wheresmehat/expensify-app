@@ -14,6 +14,8 @@ import {
 import expenses from "../fixtures/expenses";
 import database from "../../firebase/firebase";
 
+const uid = "thisIsATestUID12345";
+const loggedInAuthState = { auth: { uid } };
 const createMockStore = configureMockStore([thunk]);
 
 beforeEach((done) => {
@@ -25,7 +27,7 @@ beforeEach((done) => {
         expensesData[id] = { description, amount, note, createdAt };
     });
 
-    database.ref("expenses").set(expensesData)
+    database.ref(`users/${uid}/expenses`).set(expensesData)
         .then(() => done());
 
 });
@@ -53,7 +55,7 @@ test("should add expense with defaults to database and store", () => {
         createdAt: 0
     };
 
-    const store = createMockStore({});
+    const store = createMockStore(loggedInAuthState);
 
     return store.dispatch(startAddExpense())
         .then(() => {
@@ -70,7 +72,7 @@ test("should add expense with defaults to database and store", () => {
                 }
             });
 
-            return database.ref(`expenses/${actions[0].expense.id}`).once("value");
+            return database.ref(`users/${uid}/expenses/${actions[0].expense.id}`).once("value");
             
         })
         .then((snapshot) => {
@@ -91,7 +93,7 @@ test("should add expense to firebase and store", () => {
         createdAt: 1000
     };
 
-    const store = createMockStore({});
+    const store = createMockStore(loggedInAuthState);
 
     return store.dispatch(startAddExpense(expenseData)) // return promise so jest knows it is async or use done()
         .then(() => {
@@ -108,7 +110,7 @@ test("should add expense to firebase and store", () => {
                 }
             });
 
-            return database.ref(`expenses/${actions[0].expense.id}`).once("value");
+            return database.ref(`users/${uid}/expenses/${actions[0].expense.id}`).once("value");
             
         })
         .then((snapshot) => {
@@ -134,7 +136,7 @@ test("should setup edit expense action object", () => {
 
 test("should edit expense on firebase", () => {
 
-    const store = createMockStore({});
+    const store = createMockStore(loggedInAuthState);
     const { id, ...noIdExpense } = expenses[0]; // firebase returns expense with no id so we put the id property from expense on a separate id variable and the rest of the properties on the noIdExpense variable, now we can test the expense returned from firebase below; https://codeburst.io/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90
     const updates = { note: "I'm sure eating a lot of gum!" };
 
@@ -150,7 +152,7 @@ test("should edit expense on firebase", () => {
                 updates
             });
 
-            return database.ref(`expenses/${id}`).once("value");
+            return database.ref(`users/${uid}/expenses/${id}`).once("value");
 
         })
         .then((snapshot) => {
@@ -171,7 +173,7 @@ test("should setup remove expense action object", () => {
 
 test("should remove expense from firebase", () => {
 
-    const store = createMockStore({});
+    const store = createMockStore(loggedInAuthState);
     const id = expenses[0].id;
 
     return store.dispatch(startRemoveExpense({id}))   // return promise so jest knows it is async
@@ -185,7 +187,7 @@ test("should remove expense from firebase", () => {
                 id
             });
 
-            return database.ref(`expenses/${id}`).once("value");
+            return database.ref(`users/${uid}/expenses/${id}`).once("value");
 
         })
         .then((snapshot) => {
@@ -206,7 +208,7 @@ test("should setup set expenses action object with data", () => {
 
 test("should fetch expenses from firebase", () => {
 
-    const store = createMockStore({});
+    const store = createMockStore(loggedInAuthState);
 
     return store.dispatch(startSetExpenses())   // return promise so jest knows it is async
         .then(() => {

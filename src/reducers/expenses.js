@@ -26,6 +26,10 @@ const expensesReducer = (state = [], action) => {
 
             return action.expenses;
 
+        case "CLEAR_LOCAL_EXPENSES":
+
+            return [];
+
         default:
 
             return state;

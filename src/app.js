@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 
 import configureStore from "./store/configureStore";
 import AppRouter, { history } from "./routers/AppRouter";
-import { startSetExpenses } from "./actions/expenses";
+import { startSetExpenses, clearLocalExpenses } from "./actions/expenses";
 import { login, logout } from "./actions/auth";
 import { firebase } from "./firebase/firebase";
 
@@ -48,6 +48,7 @@ firebase.auth().onAuthStateChanged((user) => {
     }
     else {
         store.dispatch(logout());
+        store.dispatch(clearLocalExpenses());   // clear expenses from local Redux store after logout
         renderApp();
         history.push("/");
     }

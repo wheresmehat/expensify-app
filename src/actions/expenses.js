@@ -107,3 +107,8 @@ export const startSetExpenses = () => {
     };
 
 };
+
+export const clearLocalExpenses = () => ({
+
+    type: "CLEAR_LOCAL_EXPENSES"
+});

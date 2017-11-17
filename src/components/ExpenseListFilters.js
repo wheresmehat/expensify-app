@@ -48,7 +48,7 @@ export class ExpenseListFilters extends Component {
                 <div className="input-group">
                     <div className="input-group__item">
                         <input
-                            className="text-input" 
+                            className="text-input tempTextWidth" 
                             type="text"
                             placeholder="Search expenses" 
                             value={this.props.filters.text}

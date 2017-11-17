@@ -1,0 +1,14 @@
+/*
+    from 45rem(420px) to 47.5rem(460px) the date pickers X goes to the next line;
+    so in that range the text-input in ExpenseListFilters is less wide to accommodate the date picker
+*/
+.tempTextWidth {
+
+    @media (min-width: $desktop-breakpoint) {
+        width: 204px;
+    }
+     @media (min-width: $desktop-breakpoint-2) {
+        width: initial;
+    }
+  
+}

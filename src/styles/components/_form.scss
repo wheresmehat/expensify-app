@@ -1,0 +1,14 @@
+.form {
+    display: flex;
+    flex-direction: column;
+
+    >* {
+        margin-bottom: $m-size;
+    }
+}
+
+.form__error {
+    margin: 0 0 0 0.6rem;
+    font-style: italic;
+    display: inline-block;
+}

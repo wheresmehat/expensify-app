@@ -6,4 +6,7 @@ Built with React v16, Firebase and moment.js
 
 Login with your google account and keep track of your expenses!
 
-Live on Heroku: https://expensify-app-react-16.herokuapp.com/
+Live on Heroku: https://expensify-app-react-16.herokuapp.com/ 
+
+__Important!__ Your expenses data is not private. For learning purposes only!
+

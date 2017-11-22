@@ -2,7 +2,7 @@
 
 Part of the The Complete React Web Developer Course 2.0.
 
-Build with React v16, Firebase and moment.js
+Built with React v16, Firebase and moment.js
 
 Login with your google account and keep track of your expenses!
 
